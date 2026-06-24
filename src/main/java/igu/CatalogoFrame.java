@@ -27,8 +27,8 @@ public class CatalogoFrame extends JFrame {
 
         // Panel Superior: Contiene los títulos y el botón para Agregar un nuevo servicio
         JPanel topPanel = new JPanel(new BorderLayout());
-        topPanel.setBackground(Color.WHITE);
-        topPanel.setBorder(new EmptyBorder(10, 20, 10, 20));
+        topPanel.setBackground(new Color(252, 228, 236)); // Rosa pastel marca
+        topPanel.setBorder(new EmptyBorder(20, 20, 20, 20));
 
         JLabel titulo = new JLabel("Nuestra Carta", SwingConstants.CENTER);
         titulo.setFont(new Font("Serif", Font.ITALIC, 36));
@@ -38,15 +38,20 @@ public class CatalogoFrame extends JFrame {
         
         JPanel titulosPanel = new JPanel();
         titulosPanel.setLayout(new BoxLayout(titulosPanel, BoxLayout.Y_AXIS));
-        titulosPanel.setBackground(Color.WHITE);
+        titulosPanel.setBackground(new Color(252, 228, 236));
         
         titulo.setAlignmentX(Component.CENTER_ALIGNMENT);
         subtitulo.setAlignmentX(Component.CENTER_ALIGNMENT);
         titulosPanel.add(titulo);
         titulosPanel.add(subtitulo);
 
-        // Botón "Agregar Servicio"
+        // Botón "Agregar Servicio" estilizado
         JButton btnAgregar = new JButton("Agregar Servicio");
+        btnAgregar.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        btnAgregar.setBackground(new Color(40, 40, 40));
+        btnAgregar.setForeground(Color.WHITE);
+        btnAgregar.setFocusPainted(false);
+        btnAgregar.setCursor(new Cursor(Cursor.HAND_CURSOR));
         btnAgregar.addActionListener(e -> {
             // Abre el formulario en "Modo Alta" (vacío, sin pasarle ningún ID)
             FormularioServicioFrame form = new FormularioServicioFrame();

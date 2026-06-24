@@ -1,7 +1,6 @@
 package igu;
 
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import java.awt.*;
 
 public class HomeFrame extends JFrame {
@@ -30,10 +29,6 @@ public class HomeFrame extends JFrame {
         panelTextos.setLayout(new BoxLayout(panelTextos, BoxLayout.Y_AXIS));
         panelTextos.setBackground(colorMarca);
 
-        JLabel lblIcono = new JLabel("E", SwingConstants.CENTER);
-        lblIcono.setFont(new Font("Serif", Font.ITALIC, 72));
-        lblIcono.setAlignmentX(Component.CENTER_ALIGNMENT);
-
         JLabel lblTitulo = new JLabel("La Esmaltería");
         lblTitulo.setFont(new Font("Serif", Font.BOLD | Font.ITALIC, 42));
         lblTitulo.setForeground(new Color(48, 48, 48));
@@ -44,9 +39,8 @@ public class HomeFrame extends JFrame {
         lblSubtitulo.setForeground(new Color(100, 100, 100));
         lblSubtitulo.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        // Agregamos los textos al panel izquierdo con espacios intermedios (VerticalStrut)
-        panelTextos.add(lblIcono);
-        panelTextos.add(Box.createVerticalStrut(20));
+        // Agregamos los textos al panel izquierdo con espacios intermedios
+        // (VerticalStrut)
         panelTextos.add(lblTitulo);
         panelTextos.add(Box.createVerticalStrut(10));
         panelTextos.add(lblSubtitulo);
@@ -74,12 +68,13 @@ public class HomeFrame extends JFrame {
         lblInstruccion.setForeground(Color.GRAY);
         lblInstruccion.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        // Creamos los botones usando el método auxiliar de abajo para que todos sean idénticos
+        // Creamos los botones usando el método auxiliar de abajo para que todos sean
+        // idénticos
         JButton btnCatalogo = crearBotonMenu("Ver Catálogo de Servicios");
         JButton btnAgenda = crearBotonMenu("Gestionar Agenda (Turnos)");
         JButton btnContacto = crearBotonMenu("Información de Contacto");
         JButton btnSalir = crearBotonMenu("Salir del Sistema");
-        
+
         // El botón salir tiene un color distinto para destacarlo del resto
         btnSalir.setBackground(new Color(240, 240, 240));
         btnSalir.setForeground(new Color(80, 80, 80));
@@ -89,7 +84,7 @@ public class HomeFrame extends JFrame {
         panelBotones.add(Box.createVerticalStrut(5));
         panelBotones.add(lblInstruccion);
         panelBotones.add(Box.createVerticalStrut(40));
-        
+
         panelBotones.add(btnCatalogo);
         panelBotones.add(Box.createVerticalStrut(15));
         panelBotones.add(btnAgenda);

@@ -3,6 +3,8 @@ package igu;
 import javax.swing.*;
 import javax.swing.border.*;
 import java.awt.*;
+import java.io.File;
+import java.io.PrintWriter;
 import java.util.List;
 import logica.Controladora;
 import logica.Turno;
@@ -23,10 +25,10 @@ public class AgendaFrame extends JFrame {
         contenedor.setBackground(Color.WHITE);
         contenedor.setLayout(new BoxLayout(contenedor, BoxLayout.Y_AXIS));
 
-        // === Panel Superior (Títulos y Botón Nuevo Turno) ===
+        // === Panel Superior (Títulos y Botones) ===
         JPanel topPanel = new JPanel(new BorderLayout());
-        topPanel.setBackground(Color.WHITE);
-        topPanel.setBorder(new EmptyBorder(10, 20, 10, 20));
+        topPanel.setBackground(new Color(252, 228, 236)); // Rosa pastel marca
+        topPanel.setBorder(new EmptyBorder(20, 20, 20, 20));
 
         JLabel titulo = new JLabel("Agenda de Turnos", SwingConstants.CENTER);
         titulo.setFont(new Font("Serif", Font.ITALIC, 36));
@@ -36,15 +38,33 @@ public class AgendaFrame extends JFrame {
         
         JPanel titulosPanel = new JPanel();
         titulosPanel.setLayout(new BoxLayout(titulosPanel, BoxLayout.Y_AXIS));
-        titulosPanel.setBackground(Color.WHITE);
+        titulosPanel.setBackground(new Color(252, 228, 236));
         
         titulo.setAlignmentX(Component.CENTER_ALIGNMENT);
         subtitulo.setAlignmentX(Component.CENTER_ALIGNMENT);
         titulosPanel.add(titulo);
         titulosPanel.add(subtitulo);
 
+        // Panel de botones (derecha)
+        JPanel botonesPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
+        botonesPanel.setBackground(new Color(252, 228, 236));
+
+        // Botón Exportar
+        JButton btnExportar = new JButton("Exportar TXT");
+        btnExportar.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        btnExportar.setBackground(new Color(255, 255, 255));
+        btnExportar.setForeground(new Color(40, 40, 40));
+        btnExportar.setFocusPainted(false);
+        btnExportar.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        btnExportar.addActionListener(e -> exportarTurnos());
+
         // Botón para crear un turno nuevo
         JButton btnAgregar = new JButton("Nuevo Turno");
+        btnAgregar.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        btnAgregar.setBackground(new Color(40, 40, 40));
+        btnAgregar.setForeground(Color.WHITE);
+        btnAgregar.setFocusPainted(false);
+        btnAgregar.setCursor(new Cursor(Cursor.HAND_CURSOR));
         btnAgregar.addActionListener(e -> {
             // Validación: No se puede agendar un turno si no hay servicios cargados en el Catálogo
             List<logica.Servicio> servicios = control.traerServicios();
@@ -65,8 +85,11 @@ public class AgendaFrame extends JFrame {
             });
         });
 
+        botonesPanel.add(btnExportar);
+        botonesPanel.add(btnAgregar);
+
         topPanel.add(titulosPanel, BorderLayout.CENTER);
-        topPanel.add(btnAgregar, BorderLayout.EAST);
+        topPanel.add(botonesPanel, BorderLayout.EAST);
 
         add(topPanel, BorderLayout.NORTH);
 
@@ -77,6 +100,43 @@ public class AgendaFrame extends JFrame {
 
         // Cargamos los turnos al iniciar la ventana
         cargarTurnos();
+    }
+
+    // Método que genera un archivo de texto con los turnos
+    private void exportarTurnos() {
+        List<Turno> listaTurnos = control.traerTurnos();
+        if (listaTurnos == null || listaTurnos.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "No hay turnos para exportar.", "Agenda vacía", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle("Guardar Reporte de Agenda");
+        fileChooser.setSelectedFile(new File("Agenda_Turnos.txt"));
+
+        int userSelection = fileChooser.showSaveDialog(this);
+        if (userSelection == JFileChooser.APPROVE_OPTION) {
+            File archivoToSave = fileChooser.getSelectedFile();
+            try (PrintWriter out = new PrintWriter(archivoToSave)) {
+                out.println("==========================================");
+                out.println("          LA ESMALTERÍA - AGENDA          ");
+                out.println("==========================================");
+                out.println("");
+
+                for (Turno t : listaTurnos) {
+                    out.println("CLIENTE: " + t.getCliente());
+                    out.println("FECHA: " + t.getFecha() + " | HORA: " + t.getHora() + " hs");
+                    String servNombre = t.getServicio() != null ? t.getServicio().getNombre() : "Ninguno";
+                    out.println("SERVICIO: " + servNombre);
+                    out.println("ESTADO: " + t.getEstado());
+                    out.println("------------------------------------------");
+                }
+
+                JOptionPane.showMessageDialog(this, "Exportación exitosa:\n" + archivoToSave.getAbsolutePath(), "Éxito", JOptionPane.INFORMATION_MESSAGE);
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(this, "Error al guardar el archivo: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
     }
 
     // Método que actualiza la lista de turnos que se ven en pantalla
