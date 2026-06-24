@@ -4,9 +4,11 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
 import logica.Servicio;
+import logica.Turno;
 
 import jakarta.persistence.TypedQuery;
 import java.util.List;
+
 
 public class ControladoraPersistencia {
 
@@ -61,6 +63,29 @@ public class ControladoraPersistencia {
             em.remove(serv);
 
         }
+        em.getTransaction().commit();
+    }
+    // Obtener todos los turnos registrados en la base de datos
+    public List<Turno> traerTurnos() {
+
+        // Consulta JPQL para traer todos los turnos
+        TypedQuery<Turno> query =
+                em.createQuery("SELECT t FROM Turno t", Turno.class);
+
+        // Devuelve la lista de turnos encontrados
+        return query.getResultList();
+    }
+
+    // Guardar un nuevo turno en la base de datos
+    public void guardarTurno(Turno turno) {
+
+        // Inicia la transacción
+        em.getTransaction().begin();
+
+        // Guarda el turno
+        em.persist(turno);
+
+        // Confirma los cambios
         em.getTransaction().commit();
     }
 
