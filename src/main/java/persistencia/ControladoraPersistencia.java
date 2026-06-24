@@ -5,6 +5,9 @@ import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
 import logica.Servicio;
 
+import jakarta.persistence.TypedQuery;
+import java.util.List;
+
 public class ControladoraPersistencia {
 
     EntityManagerFactory emf =
@@ -12,6 +15,7 @@ public class ControladoraPersistencia {
 
     EntityManager em = emf.createEntityManager();
 
+    //Guarda un servicio en la base de dato
     public void guardarServicio(Servicio serv) {
 
         em.getTransaction().begin();
@@ -21,4 +25,43 @@ public class ControladoraPersistencia {
         em.getTransaction().commit();
 
     }
+    // Obtener todos los servicios de la base de datos y devolver en una lista
+    public List<Servicio> traerServicios() {
+
+        //consulta JPQL
+        TypedQuery<Servicio> query =
+                em.createQuery("SELECT s FROM Servicio s", Servicio.class);
+
+        //ejecucion de la consulta para devolver todos los registros encontrados
+        return query.getResultList();
+    }
+
+    public Servicio buscarServicio(long id){
+
+        return em.find(Servicio.class, id);
+    }
+    // editar el servicio
+    public void editarServicio(Servicio serv){
+        em.getTransaction().begin();
+        //tomar el objeto y sincronizar con la base de datos
+        em.merge(serv);
+        em.getTransaction().commit();
+    }
+
+    // busca un servicio por id y lo elimina de la base de datos
+
+    public void eliminarServicio(Long id){
+
+        em.getTransaction().begin();
+
+        Servicio serv = em.find(Servicio.class, id);
+
+        if (serv != null){
+
+            em.remove(serv);
+
+        }
+        em.getTransaction().commit();
+    }
+
 }
