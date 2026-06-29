@@ -72,7 +72,6 @@ public class HomeFrame extends JFrame {
         // idénticos
         JButton btnCatalogo = crearBotonMenu("Ver Catálogo de Servicios");
         JButton btnAgenda = crearBotonMenu("Gestionar Agenda (Turnos)");
-        JButton btnContacto = crearBotonMenu("Información de Contacto");
         JButton btnSalir = crearBotonMenu("Salir del Sistema");
 
         // El botón salir tiene un color distinto para destacarlo del resto
@@ -88,8 +87,6 @@ public class HomeFrame extends JFrame {
         panelBotones.add(btnCatalogo);
         panelBotones.add(Box.createVerticalStrut(15));
         panelBotones.add(btnAgenda);
-        panelBotones.add(Box.createVerticalStrut(15));
-        panelBotones.add(btnContacto);
         panelBotones.add(Box.createVerticalStrut(40));
         panelBotones.add(btnSalir);
 
@@ -108,7 +105,6 @@ public class HomeFrame extends JFrame {
         // ==========================================
         btnCatalogo.addActionListener(e -> new CatalogoFrame().setVisible(true));
         btnAgenda.addActionListener(e -> new AgendaFrame().setVisible(true));
-        btnContacto.addActionListener(e -> new ContactoDialog(this).setVisible(true));
         btnSalir.addActionListener(e -> System.exit(0)); // Cierra toda la ejecución
     }
 

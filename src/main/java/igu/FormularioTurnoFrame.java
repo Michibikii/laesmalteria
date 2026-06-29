@@ -8,6 +8,14 @@ import java.util.List;
 import logica.Controladora;
 import logica.Servicio;
 import logica.Turno;
+import com.github.lgooddatepicker.components.DatePicker;
+import com.github.lgooddatepicker.components.DatePickerSettings;
+import com.github.lgooddatepicker.components.TimePicker;
+import com.github.lgooddatepicker.components.TimePickerSettings;
+import com.github.lgooddatepicker.optionalusertools.DateVetoPolicy;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 
 public class FormularioTurnoFrame extends JFrame {
 
@@ -16,8 +24,9 @@ public class FormularioTurnoFrame extends JFrame {
     private boolean esModificacion = false;
 
     private JTextField txtCliente;
-    private JTextField txtFecha;
-    private JTextField txtHora;
+    private JTextField txtTelefono;
+    private DatePicker datePicker;
+    private TimePicker timePicker;
     private JComboBox<String> cmbEstado;
     private JComboBox<String> cmbServicios;
     private List<Servicio> listaServicios;
@@ -46,7 +55,7 @@ public class FormularioTurnoFrame extends JFrame {
     private void initComponents() {
         setTitle(esModificacion ? "Editar Turno" : "Agregar Nuevo Turno");
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setSize(400, 380);
+        setSize(400, 420);
         setLocationRelativeTo(null);
         setResizable(false);
 
@@ -67,36 +76,58 @@ public class FormularioTurnoFrame extends JFrame {
         txtCliente.setBounds(150, 70, 180, 25);
         panelPrincipal.add(txtCliente);
 
+        JLabel lblTelefono = new JLabel("Teléfono:");
+        lblTelefono.setBounds(50, 110, 80, 25);
+        panelPrincipal.add(lblTelefono);
+        txtTelefono = new JTextField();
+        txtTelefono.setBounds(150, 110, 180, 25);
+        panelPrincipal.add(txtTelefono);
+
         JLabel lblFecha = new JLabel("Fecha:");
-        lblFecha.setBounds(50, 110, 80, 25);
+        lblFecha.setBounds(50, 150, 80, 25);
         panelPrincipal.add(lblFecha);
-        txtFecha = new JTextField();
-        txtFecha.setBounds(150, 110, 180, 25);
-        panelPrincipal.add(txtFecha);
+        
+        DatePickerSettings dateSettings = new DatePickerSettings();
+        dateSettings.setAllowKeyboardEditing(false);
+        dateSettings.setFormatForDatesCommonEra("dd-MM-yyyy");
+        datePicker = new DatePicker(dateSettings);
+        dateSettings.setVetoPolicy(new DateVetoPolicy() {
+            @Override
+            public boolean isDateAllowed(LocalDate date) {
+                return !date.isBefore(LocalDate.now());
+            }
+        });
+        datePicker.setBounds(150, 150, 180, 25);
+        panelPrincipal.add(datePicker);
 
         JLabel lblHora = new JLabel("Hora:");
-        lblHora.setBounds(50, 150, 100, 25);
+        lblHora.setBounds(50, 190, 100, 25);
         panelPrincipal.add(lblHora);
-        txtHora = new JTextField();
-        txtHora.setBounds(150, 150, 180, 25);
-        panelPrincipal.add(txtHora);
+        
+        TimePickerSettings timeSettings = new TimePickerSettings();
+        timeSettings.setAllowKeyboardEditing(false);
+        timeSettings.setFormatForDisplayTime("HH:mm");
+        timeSettings.generatePotentialMenuTimes(TimePickerSettings.TimeIncrement.ThirtyMinutes, null, null);
+        timePicker = new TimePicker(timeSettings);
+        timePicker.setBounds(150, 190, 180, 25);
+        panelPrincipal.add(timePicker);
 
         JLabel lblEstado = new JLabel("Estado:");
-        lblEstado.setBounds(50, 190, 80, 25);
+        lblEstado.setBounds(50, 230, 80, 25);
         panelPrincipal.add(lblEstado);
         cmbEstado = new JComboBox<>(new String[]{"Pendiente de Pago", "Pagado", "Cancelado"});
-        cmbEstado.setBounds(150, 190, 180, 25);
+        cmbEstado.setBounds(150, 230, 180, 25);
         panelPrincipal.add(cmbEstado);
         
         JLabel lblServicio = new JLabel("Servicio:");
-        lblServicio.setBounds(50, 230, 80, 25);
+        lblServicio.setBounds(50, 270, 80, 25);
         panelPrincipal.add(lblServicio);
         cmbServicios = new JComboBox<>();
-        cmbServicios.setBounds(150, 230, 180, 25);
+        cmbServicios.setBounds(150, 270, 180, 25);
         panelPrincipal.add(cmbServicios);
 
         btnGuardar = new JButton(esModificacion ? "Guardar Cambios" : "Guardar");
-        btnGuardar.setBounds(60, 280, 140, 35);
+        btnGuardar.setBounds(60, 320, 140, 35);
         btnGuardar.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -106,7 +137,7 @@ public class FormularioTurnoFrame extends JFrame {
         panelPrincipal.add(btnGuardar);
 
         btnCancelar = new JButton("Cancelar");
-        btnCancelar.setBounds(210, 280, 100, 35);
+        btnCancelar.setBounds(210, 320, 100, 35);
         btnCancelar.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -128,8 +159,21 @@ public class FormularioTurnoFrame extends JFrame {
     private void cargarDatosPrevios() {
         if (turnoAEditar != null) {
             txtCliente.setText(turnoAEditar.getCliente());
-            txtFecha.setText(turnoAEditar.getFecha());
-            txtHora.setText(turnoAEditar.getHora());
+            txtTelefono.setText(turnoAEditar.getTelefono());
+            
+            try {
+                if (turnoAEditar.getFecha() != null && !turnoAEditar.getFecha().isEmpty()) {
+                    DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+                    datePicker.setDate(LocalDate.parse(turnoAEditar.getFecha(), dateFormatter));
+                }
+                if (turnoAEditar.getHora() != null && !turnoAEditar.getHora().isEmpty()) {
+                    DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
+                    timePicker.setTime(LocalTime.parse(turnoAEditar.getHora(), timeFormatter));
+                }
+            } catch (Exception ex) {
+                // Ignore parse errors
+            }
+            
             cmbEstado.setSelectedItem(turnoAEditar.getEstado());
 
             if (turnoAEditar.getServicio() != null && listaServicios != null) {
@@ -146,21 +190,27 @@ public class FormularioTurnoFrame extends JFrame {
 
     private void btnGuardarActionPerformed(ActionEvent evt) {
         String cliente = txtCliente.getText();
-        String fecha = txtFecha.getText();
-        String hora = txtHora.getText();
+        String telefono = txtTelefono.getText();
         String estado = (String) cmbEstado.getSelectedItem();
         int indexServicio = cmbServicios.getSelectedIndex();
+        
+        LocalDate localDate = datePicker.getDate();
+        LocalTime localTime = timePicker.getTime();
 
-        if (cliente.isEmpty() || fecha.isEmpty() || hora.isEmpty() || estado.isEmpty() || indexServicio == -1) {
+        if (cliente.isEmpty() || telefono.isEmpty() || localDate == null || localTime == null || estado.isEmpty() || indexServicio == -1) {
             JOptionPane.showMessageDialog(this, "Por favor, complete todos los campos y seleccione un servicio.", "Campos vacíos", JOptionPane.WARNING_MESSAGE);
             return;
         }
+        
+        String fecha = localDate.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
+        String hora = localTime.format(DateTimeFormatter.ofPattern("HH:mm"));
 
         Servicio servicioSeleccionado = listaServicios.get(indexServicio);
 
         if (esModificacion) {
             if (turnoAEditar != null) {
                 turnoAEditar.setCliente(cliente);
+                turnoAEditar.setTelefono(telefono);
                 turnoAEditar.setFecha(fecha);
                 turnoAEditar.setHora(hora);
                 turnoAEditar.setEstado(estado);
@@ -171,6 +221,7 @@ public class FormularioTurnoFrame extends JFrame {
         } else {
             Turno turno = new Turno();
             turno.setCliente(cliente);
+            turno.setTelefono(telefono);
             turno.setFecha(fecha);
             turno.setHora(hora);
             turno.setEstado(estado);

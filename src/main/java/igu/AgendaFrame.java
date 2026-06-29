@@ -124,7 +124,7 @@ public class AgendaFrame extends JFrame {
                 out.println("");
 
                 for (Turno t : listaTurnos) {
-                    out.println("CLIENTE: " + t.getCliente());
+                    out.println("CLIENTE: " + t.getCliente() + " | TEL: " + t.getTelefono());
                     out.println("FECHA: " + t.getFecha() + " | HORA: " + t.getHora() + " hs");
                     String servNombre = t.getServicio() != null ? t.getServicio().getNombre() : "Ninguno";
                     out.println("SERVICIO: " + servNombre);
@@ -179,7 +179,7 @@ public class AgendaFrame extends JFrame {
         izquierda.setLayout(new BoxLayout(izquierda, BoxLayout.Y_AXIS));
         izquierda.setBackground(Color.WHITE);
 
-        JLabel lblCliente = new JLabel(turno.getCliente());
+        JLabel lblCliente = new JLabel(turno.getCliente() + " (Tel: " + turno.getTelefono() + ")");
         lblCliente.setFont(new Font("Segoe UI", Font.BOLD, 18));
 
         // Si el turno no tiene servicio asignado por algún error de la BD, dice "Ninguno"

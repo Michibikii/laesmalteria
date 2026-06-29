@@ -15,6 +15,7 @@ public class Turno implements Serializable {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
     private String cliente;
+    private String telefono;
     private String fecha;
     private String hora;
     private String estado;
@@ -26,9 +27,10 @@ public class Turno implements Serializable {
     public Turno() {
     }
 
-    public Turno(Long id, String cliente, String fecha, String hora, String estado, Servicio servicio) {
+    public Turno(Long id, String cliente, String telefono, String fecha, String hora, String estado, Servicio servicio) {
         this.id = id;
         this.cliente = cliente;
+        this.telefono = telefono;
         this.fecha = fecha;
         this.hora = hora;
         this.estado = estado;
@@ -49,6 +51,14 @@ public class Turno implements Serializable {
 
     public void setCliente(String cliente) {
         this.cliente = cliente;
+    }
+
+    public String getTelefono() {
+        return telefono;
+    }
+
+    public void setTelefono(String telefono) {
+        this.telefono = telefono;
     }
 
     public String getFecha() {
